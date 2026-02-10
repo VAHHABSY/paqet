@@ -23,6 +23,8 @@ jobs:
                       filename: arm64
                     - goarch: arm
                       filename: arm32
+                    - goarch: mips64
+                      filename: mips64
 
         steps:
             - name: Setup Build Environment
@@ -37,6 +39,10 @@ jobs:
                     dpkg --add-architecture armhf
                     apt-get update
                     apt-get install -y --no-install-recommends gcc-arm-linux-gnueabihf libc6-dev-armhf-cross libpcap-dev:armhf
+                  elif [ "${{ matrix.goarch }}" = "mips64" ]; then
+                    dpkg --add-architecture mips64
+                    apt-get update
+                    apt-get install -y --no-install-recommends gcc-mips64-linux-gnuabi64 libc6-dev-mips64-cross libpcap-dev:mips64
                   else
                     apt-get install -y --no-install-recommends build-essential libpcap-dev
                   fi
@@ -77,6 +83,9 @@ jobs:
                   elif [ "$GOARCH" = "arm" ]; then
                     export CC=arm-linux-gnueabihf-gcc
                     export GOARM=7
+                  elif [ "$GOARCH" = "mips64" ]; then
+                    export CC=mips64-linux-gnuabi64-gcc
+                    export GOMIPS=softfloat
                   fi
 
                   go build -v -a -trimpath \
